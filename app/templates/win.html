@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="result-message win">
+    <h2>You won!</h2>
+    <p>You guessed <strong>{{ target_word }}</strong> in {{ guess_count }} tries!</p>
+    <a href="{{ url_for('main.home') }}" class="play-again">Play Again</a>
+</div>
+{% endblock %}
