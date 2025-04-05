@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wordle Rivals</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <header>
+        <h1>Wordle Rivals</h1>
         <nav>
             <a href="{{ url_for('main.singleplayer_home') }}">Single Player</a>
             <a href="{{ url_for('main.multiplayer_lobby') }}">Multiplayer</a>
         </nav>
-        <h1>Wordle Rivals</h1>
     </header>
 
     <main>
@@ -28,10 +29,6 @@
 
         {% block content %}{% endblock %}
     </main>
-
-    <footer>
-        <p>© 2025 WordleRivals</p>
-    </footer>
 
     {% block scripts %}{% endblock %}
 </body>

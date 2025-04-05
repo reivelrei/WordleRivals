@@ -3,12 +3,10 @@
 {% block content %}
 <div class="multiplayer-game">
     <div class="game-header">
-        <h2>Game ID: {{ session.session_id }}</h2>
         <div class="game-status">
             {% if session.game_state == 'waiting' %}
             <p>Waiting for opponent...</p>
             {% elif session.game_state == 'playing' %}
-            <p>Your Turn</p>
             {% else %}
             <p>Game ended</p>
             {% endif %}
@@ -18,7 +16,7 @@
     <div class="player-grids">
         <!-- Current Player's Grid -->
         <div class="player-grid">
-            <h3>Your Board</h3>
+            <h3>You</h3>
             <div class="grid">
                 {% for i in range(6) %}
                 <div class="row" id="player-row-{{ i }}">
@@ -46,17 +44,22 @@
     </div>
 
     {% if session.game_state == 'playing' and not game.is_game_over() %}
-    <form method="POST" class="guess-form">
-        <input type="text"
-               name="guess"
-               maxlength="{{ game.word_length }}"
-               pattern="[A-Za-z]{{ '{' ~ game.word_length ~ '}' }}"
-               title="{{ game.word_length }} letter word"
-               required
-               autofocus
-               autocomplete="off"
-               class="guess-input">
-        <button type="submit" class="submit-button">Submit</button>
+    <form method="POST" class="guess-form field is-grouped is-justify-content-center">
+        <div class="control">
+            <input type="text"
+                   name="guess"
+                   maxlength="{{ game.word_length }}"
+                   pattern="[A-Za-z]{{ '{' ~ game.word_length ~ '}' }}"
+                   title="{{ game.word_length }} letter word"
+                   class="input is-dark"
+                   required
+                   autofocus
+                   autocomplete="off"
+                   class="guess-input">
+        </div>
+        <div class="control">
+            <button type="submit" class="button is-info submit-button">Submit</button>
+        </div>
     </form>
     {% endif %}
 
@@ -65,7 +68,7 @@
             <h2 id="gameOverTitle"></h2>
             <p id="gameOverMessage"></p>
             <div class="modal-buttons">
-                <button id="returnToLobby" class="btn btn-secondary">Return to Lobby</button>
+                <button id="returnToLobby" class="button is-danger">Return to Lobby</button>
             </div>
         </div>
     </div>

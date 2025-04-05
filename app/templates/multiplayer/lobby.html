@@ -2,33 +2,42 @@
 
 {% block content %}
 <div class="multiplayer-lobby">
-    <h2>Multiplayer Lobby</h2>
 
     <div class="lobby-options">
         <div class="create-game">
             <h3>Create New Game</h3>
             <form id="create-game-form">
-                <label for="word-length">Word Length:</label>
-                <select id="word-length" name="length">
-                    <option value="5">5 Letters</option>
-                    <option value="6">6 Letters</option>
-                    <option value="7">7 Letters</option>
-                </select>
-                <button type="submit">Create Game</button>
+                <div class="field">
+                    <label for="word-length" class="label">Word Length:</label>
+                    <div class="control">
+                        <div class="select is-fullwidth">
+                            <select id="word-length" name="length">
+                                <option value="5">5 Letters</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="button is-info">Create Game</button>
             </form>
             <div id="invite-section" style="display: none;">
                 <p>Share this link with your opponent:</p>
-                <input type="text" id="invite-link" readonly>
-                <button onclick="copyInviteLink()">Copy</button>
+                <div class="field has-addons">
+                    <div class="control is-expanded">
+                        <input type="text" id="invite-link" class="input is-dark" readonly>
+                    </div>
+                    <div class="control">
+                        <button onclick="copyInviteLink()" class="button is-success is-dark">Copy</button>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="join-game">
             <h3>Join Existing Game</h3>
             <form id="join-game-form">
-                <label for="game-id">Game ID:</label>
-                <input type="text" id="game-id" name="game_id" required>
-                <button type="submit">Join Game</button>
+                <label for="game-id" class="has-text-light">Game ID:</label>
+                <input type="text" id="game-id" name="game_id" class="input is-dark" required>
+                <button type="submit" class="button is-info">Join Game</button>
             </form>
         </div>
     </div>

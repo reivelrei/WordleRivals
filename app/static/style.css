@@ -1,17 +1,25 @@
 /* Base Styles */
+html {
+    background: #0d0d0d;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
     line-height: 1.6;
     color: #333;
+    background: #0d0d0d;
 }
 
 header {
-    background: #6aaa64;
-    color: white;
-    padding: 1rem 0;
+    color: #efe5e4;
+    padding: 3rem 0;
     text-align: center;
+}
+
+header h1 {
+    font-size: 1.5rem;
 }
 
 nav {
@@ -22,7 +30,8 @@ nav {
 }
 
 nav a {
-    color: white;
+    color: #efe5e4;
+    font-size: 1.5rem;
     text-decoration: none;
     font-weight: bold;
     padding: 5px 10px;
@@ -39,27 +48,24 @@ main {
     padding: 20px;
 }
 
-footer {
-    text-align: center;
-    padding: 20px;
-    background: #f5f5f5;
-    margin-top: 40px;
-}
-
 /* Game Container */
 .game-container,
 .multiplayer-lobby,
 .multiplayer-game {
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
-    padding: 20px;
+}
+
+.game-container {
+    margin: auto;
+    text-align: center;
 }
 
 .guess-counter {
     font-size: 1.2em;
     margin: 15px 0;
     font-weight: bold;
-    color: #555;
+    color: #efe5e4;
 }
 
 /* Grid & Tiles */
@@ -84,30 +90,30 @@ footer {
     font-size: 2rem;
     font-weight: bold;
     text-transform: uppercase;
-    border: 2px solid #d3d6da;
+    border: 2px solid #3d3d3d;
 }
 
 .tile.empty {
-    background-color: white;
+    background-color: #0d0d0d;
 }
 
 /* Tile Color Classes */
 .tile.correct {
     background-color: #6aaa64;
     border-color: #6aaa64;
-    color: white;
+    color: #efe5e4;
 }
 
 .tile.present {
     background-color: #c9b458;
     border-color: #c9b458;
-    color: white;
+    color: #efe5e4;
 }
 
 .tile.absent {
     background-color: #787c7e;
     border-color: #787c7e;
-    color: white;
+    color: #efe5e4;
 }
 
 /* Forms */
@@ -125,29 +131,24 @@ footer {
 
 .submit-button,
 .lobby-options button {
-    padding: 10px 20px;
-    font-size: 1.2rem;
-    background: #6aaa64;
-    color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    margin-left: 10px;
 }
+
 
 /* Result Screens */
 .result-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 70vh;
+    min-height: 50vh;
+    color: #efe5e4;
 }
 
 .result-box {
-    background: white;
     padding: 30px;
     border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     max-width: 400px;
     width: 100%;
     text-align: center;
@@ -158,11 +159,11 @@ footer {
 }
 
 .win .result-box {
-    border: 3px solid #6aaa64;
+    box-shadow: 0px 0px 10px 3px #6aaa64;
 }
 
 .lose .result-box {
-    border: 3px solid #c9b458;
+    box-shadow: 0px 0px 10px 3px #c9b458;
 }
 
 .solution,
@@ -178,12 +179,20 @@ footer {
 .play-again {
     display: inline-block;
     padding: 12px 25px;
-    background: #6aaa64;
-    color: white;
+    color: #0d0d0d;
+    font-weight: 500;
     text-decoration: none;
     border-radius: 5px;
     font-size: 1.1em;
     margin-top: 20px;
+}
+
+.win .play-again {
+    background: #6aaa64;
+}
+
+.lose .play-again {
+    background: #c9b458;
 }
 
 /* Flash Messages */
@@ -198,16 +207,25 @@ footer {
 .flash {
     padding: 10px 20px;
     background: #ff4444;
-    color: white;
+    color: #efe5e4;
     border-radius: 5px;
     margin-bottom: 10px;
     animation: fadeInOut 3s ease-in-out forwards;
 }
 
 @keyframes fadeInOut {
-    0% { opacity: 0; transform: translateY(-20px); }
-    10%, 90% { opacity: 1; transform: translateY(0); }
-    100% { opacity: 0; transform: translateY(-20px); }
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    10%, 90% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
 }
 
 /* Multiplayer Lobby */
@@ -216,11 +234,12 @@ footer {
     grid-template-columns: 1fr 1fr;
     gap: 30px;
     margin-top: 30px;
+    filter: drop-shadow(0px 0px 7px #7182a9);
 }
 
 .create-game,
 .join-game {
-    background: #f8f8f8;
+    background: #0d0d0d;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -228,7 +247,7 @@ footer {
 
 .lobby-options h3 {
     margin-top: 0;
-    color: #6aaa64;
+    color: #efe5e4;
 }
 
 .lobby-options form {
@@ -263,7 +282,7 @@ footer {
 
 .player-grid,
 .opponent-grid {
-    background: #f8f8f8;
+    background: #0d0d0d;
     padding: 20px;
     border-radius: 8px;
 }
@@ -272,7 +291,16 @@ footer {
 .opponent-grid h3 {
     text-align: center;
     margin-top: 0;
-    color: #6aaa64;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+}
+
+.player-grid h3 {
+    color: #3d645e;
+}
+
+.opponent-grid h3 {
+    color: #c8a5a6;
 }
 
 .opponent-grid .tile:not(.correct):not(.present) {
@@ -302,7 +330,8 @@ footer {
 }
 
 .modal-content {
-    background: white;
+    background: #0d0d0d;
+    color: #efe5e4;
     padding: 2rem;
     border-radius: 8px;
     max-width: 500px;
@@ -326,10 +355,9 @@ footer {
 
 .btn-primary {
     background-color: #4CAF50;
-    color: white;
+    color: #efe5e4;
 }
 
-.btn-secondary {
-    background-color: #f44336;
-    color: white;
+.field {
+    margin-bottom: 0 !important;
 }
