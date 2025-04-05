@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="multiplayer-game">
+    <div class="game-header">
+        <h2>Game ID: {{ session.session_id }}</h2>
+        <div class="game-status">
+            {% if session.game_state == 'waiting' %}
+            <p>Waiting for opponent...</p>
+            {% elif session.game_state == 'playing' %}
+            <p>Your Turn</p>
+            {% else %}
+            <p>Game ended</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="player-grids">
+        <!-- Current Player's Grid -->
+        <div class="player-grid">
+            <h3>Your Board</h3>
+            <div class="grid">
+                {% for i in range(6) %}
+                <div class="row" id="player-row-{{ i }}">
+                    {% for j in range(game.word_length) %}
+                    <div class="tile empty" id="player-tile-{{ i }}-{{ j }}"></div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Opponent's Grid (only shows correct/present letters) -->
+        <div class="opponent-grid">
+            <h3>Opponent</h3>
+            <div class="grid">
+                {% for i in range(6) %}
+                <div class="row" id="opponent-row-{{ i }}">
+                    {% for j in range(game.word_length) %}
+                    <div class="tile empty" id="opponent-tile-{{ i }}-{{ j }}"></div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {% if session.game_state == 'playing' and not game.is_game_over() %}
+    <form method="POST" class="guess-form">
+        <input type="text"
+               name="guess"
+               maxlength="{{ game.word_length }}"
+               pattern="[A-Za-z]{{ '{' ~ game.word_length ~ '}' }}"
+               title="{{ game.word_length }} letter word"
+               required
+               autofocus
+               autocomplete="off"
+               class="guess-input">
+        <button type="submit" class="submit-button">Submit</button>
+    </form>
+    {% endif %}
+
+    <div id="gameOverModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2 id="gameOverTitle"></h2>
+            <p id="gameOverMessage"></p>
+            <div class="modal-buttons">
+                <button id="returnToLobby" class="btn btn-secondary">Return to Lobby</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+<script>
+    const socket = io();
+    const gameId = "{{ session.session_id }}";
+    const playerNum = "{{ player_num }}";
+    let currentPlayerRow = 0;
+    let currentOpponentRow = 0;
+
+    socket.emit("join_game", {game_id: "{{ session.session_id }}"});
+
+
+    // Handle updates - now separate for own and opponent guesses
+    socket.on('player_update', function (data) {
+        if (data.type === 'own_guess') {
+            updatePlayerGrid(data.letters, data.feedback, currentPlayerRow);
+            currentPlayerRow++;  // increment only after drawing own guess
+        } else {
+            updateOpponentGrid(data.feedback, currentOpponentRow);
+            currentOpponentRow++;  // increment only after drawing opponent guess
+        }
+    });
+
+    // Update grid for YOU (player)
+    function updatePlayerGrid(letters, feedback, rowIndex) {
+        const row = document.getElementById(`player-row-${rowIndex}`);
+        if (row) {
+            const tiles = row.querySelectorAll('.tile');
+            letters.split('').forEach((letter, i) => {
+                tiles[i].textContent = letter;
+                tiles[i].className = `tile ${feedback[i]}`;
+            });
+        }
+    }
+
+    // Update grid for the opponent
+    function updateOpponentGrid(feedback, rowIndex) {
+        const row = document.getElementById(`opponent-row-${rowIndex}`);
+        if (row) {
+            const tiles = row.querySelectorAll('.tile');
+            tiles.forEach((tile, i) => {
+                tile.textContent = ''; // opponent letters are hidden
+                tile.className = `tile ${feedback[i]}`; // just feedback color
+            });
+        }
+    }
+
+
+    // Form submission
+    document.querySelector('.guess-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const guess = this.guess.value.trim().toUpperCase();
+
+        // Send to server - no local updates
+        socket.emit('submit_guess', {
+            game_id: gameId,
+            guess: guess
+        });
+
+        this.reset();
+    });
+
+
+    // Handle winning
+    socket.on('game_won', function (data) {
+        showGameOverModal(true, data.word);
+    });
+
+    // Handle losing
+    socket.on('game_lost', function (data) {
+        showGameOverModal(false, data.word);
+    });
+
+    // Update the JavaScript:
+    function showGameOverModal(won, word) {
+        const modal = document.getElementById('gameOverModal');
+        const title = document.getElementById('gameOverTitle');
+        const message = document.getElementById('gameOverMessage');
+        const returnBtn = document.getElementById('returnToLobby');
+
+        if (won) {
+            title.textContent = "You Won!";
+            message.textContent = `Congratulations! The word was ${word}`;
+        } else {
+            title.textContent = "Game Over";
+            message.textContent = `The word was ${word}. Better luck next time!`;
+        }
+
+        modal.style.display = 'flex';
+
+        // Disable further guesses
+        const guessForm = document.querySelector('.guess-form');
+        if (guessForm) guessForm.style.display = 'none';
+
+        // Return to lobby handler
+        returnBtn.onclick = function () {
+            socket.emit('end_game', {game_id: gameId});
+            window.location.href = '/multiplayer';
+        };
+
+    }
+
+    // Handle game ended event
+    socket.on('game_ended', function () {
+        window.location.href = '/multiplayer';
+    });
+
+
+</script>
+{% endblock %}

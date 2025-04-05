@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="result-container lose">
+    <div class="result-box">
+        <h1>😢 Game Over 😢</h1>
+        <p class="solution">
+            The word was: <strong>{{ target_word }}</strong>
+        </p>
+        <p class="encouragement">
+            Better luck next time!
+        </p>
+        <div class="actions">
+            <a href="{{ url_for('main.singleplayer_home') }}" class="play-again">
+                Try Again
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

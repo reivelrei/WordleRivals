@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="game-container">
+    <h1>Wordle (Single Player)</h1>
+
+    <div class="guess-counter">
+        Guesses remaining: {{ remaining_guesses }}
+    </div>
+
+    <div class="grid">
+        {% for guess in game.guesses %}
+            <div class="row">
+                {% for feedback in game.get_feedback(guess) %}
+                    <div class="tile {{ feedback }}">
+                        {{ guess[loop.index0] }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        {% if not game.is_game_over() %}
+            <div class="row current-row">
+                {% for i in range(game.word_length) %}
+                    <div class="tile empty"></div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    {% if not game.is_game_over() %}
+    <form method="POST" action="{{ url_for('main.sp_submit_guess') }}" class="guess-form">
+        <input type="text"
+               name="guess"
+               maxlength="{{ game.word_length }}"
+               pattern="[A-Za-z]{{ '{' ~ game.word_length ~ '}' }}"
+               title="{{ game.word_length }} letter word"
+               required
+               autofocus
+               autocomplete="off"
+               class="guess-input">
+        <button type="submit" class="submit-button">Submit</button>
+    </form>
+    {% else %}
+    <div class="game-over-actions">
+        <a href="{{ url_for('main.singleplayer_home') }}" class="new-game-button">New Game</a>
+    </div>
+    {% endif %}
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for message in messages %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+</div>
+{% endblock %}

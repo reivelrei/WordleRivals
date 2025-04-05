@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="result-container win">
+    <div class="result-box">
+        <h1>🎉 You Won! 🎉</h1>
+        <p class="solution">
+            The word was: <strong>{{ target_word }}</strong>
+        </p>
+        <p class="stats">
+            You guessed it in <strong>{{ guess_count }}</strong>
+            {{ 'try' if guess_count == 1 else 'tries' }}!
+        </p>
+        <div class="actions">
+            <a href="{{ url_for('main.singleplayer_home') }}" class="play-again">
+                Play Again
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

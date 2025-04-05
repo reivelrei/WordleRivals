@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="multiplayer-lobby">
+    <h2>Multiplayer Lobby</h2>
+
+    <div class="lobby-options">
+        <div class="create-game">
+            <h3>Create New Game</h3>
+            <form id="create-game-form">
+                <label for="word-length">Word Length:</label>
+                <select id="word-length" name="length">
+                    <option value="5">5 Letters</option>
+                    <option value="6">6 Letters</option>
+                    <option value="7">7 Letters</option>
+                </select>
+                <button type="submit">Create Game</button>
+            </form>
+            <div id="invite-section" style="display: none;">
+                <p>Share this link with your opponent:</p>
+                <input type="text" id="invite-link" readonly>
+                <button onclick="copyInviteLink()">Copy</button>
+            </div>
+        </div>
+
+        <div class="join-game">
+            <h3>Join Existing Game</h3>
+            <form id="join-game-form">
+                <label for="game-id">Game ID:</label>
+                <input type="text" id="game-id" name="game_id" required>
+                <button type="submit">Join Game</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+<script>
+    const socket = io();
+
+    // Debugging
+    socket.on('connect', () => {
+        console.log('Connected to Socket.IO with ID:', socket.id);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('Disconnected from Socket.IO');
+    });
+
+    // Game creation handler
+    document.getElementById('create-game-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+
+        try {
+            const response = await fetch('/multiplayer/create', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                // Show invite link
+                const fullLink = `${window.location.origin}${data.invite_link}`;
+                document.getElementById('invite-link').value = fullLink;
+                document.getElementById('invite-section').style.display = 'block';
+
+                // Join Socket.IO room
+                socket.emit('join_game', {game_id: data.game_id});
+                console.log('Joined game room:', data.game_id);
+
+                // Start checking game status
+                startGameStatusCheck(data.game_id);
+            } else {
+                alert(data.error || 'Failed to create game');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Network error - please try again');
+        }
+    });
+
+    // Game joining handler
+    document.getElementById('join-game-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const gameId = document.getElementById('game-id').value.trim();
+        if (gameId) {
+            window.location.href = `/multiplayer/join/${gameId}`;
+        }
+    });
+
+    // Handle game start redirection
+    socket.on('game_ready', function (game_id) {
+        console.log('Game ready received, redirecting to:', game_id);
+        window.location.href = `/multiplayer/game/${game_id}`;
+    });
+
+    // Handle player count updates
+    socket.on('player_count', function (data) {
+        console.log('Player count updated:', data.count);
+    });
+
+    function copyInviteLink() {
+        const linkInput = document.getElementById('invite-link');
+        linkInput.select();
+        document.execCommand('copy');
+        alert('Link copied to clipboard!');
+    }
+
+    // Polling fallback
+    function startGameStatusCheck(gameId) {
+        const checkInterval = setInterval(async () => {
+            const response = await fetch(`/game-status?game_id=${gameId}`);
+            const data = await response.json();
+
+            if (data.ready) {
+                clearInterval(checkInterval);
+                window.location.href = `/multiplayer/game/${gameId}`;
+            }
+        }, 2000);
+    }
+</script>
+{% endblock %}

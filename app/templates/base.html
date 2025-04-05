@@ -1,21 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wordle Rivals</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-        <div class="flash-messages">
-            {% for message in messages %}
-                <div class="flash">{{ message }}</div>
-            {% endfor %}
-        </div>
-    {% endif %}
-{% endwith %}
-    <div id="content">
+    <header>
+        <nav>
+            <a href="{{ url_for('main.singleplayer_home') }}">Single Player</a>
+            <a href="{{ url_for('main.multiplayer_lobby') }}">Multiplayer</a>
+        </nav>
+        <h1>Wordle Rivals</h1>
+    </header>
+
+    <main>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for message in messages %}
+                        <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
         {% block content %}{% endblock %}
-    </div>
+    </main>
+
+    <footer>
+        <p>© 2025 WordleRivals</p>
+    </footer>
+
+    {% block scripts %}{% endblock %}
 </body>
 </html>
