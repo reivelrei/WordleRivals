@@ -5,7 +5,7 @@ from flask_socketio import SocketIO
 from .game_manager import GameManager
 
 game_manager = GameManager()
-socketio = SocketIO(async_mode='gevent', cors_allowed_origins="*", manage_session=False)
+socketio = SocketIO()
 
 def create_app():
     load_dotenv()
